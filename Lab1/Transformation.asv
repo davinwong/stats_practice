@@ -1,0 +1,111 @@
+classdef Transformation
+    
+    properties
+        Probability
+        Sigma
+        Mu
+    end
+    
+    methods 
+        function Class = Transformation(prob, sigma, mu)
+            Class.Probability = prob;
+            Class.Sigma = sigma;
+            Class.Mu = mu;
+        end
+        
+        function TransformationPlot(classes, colours, pts, x_range, y_range, contours, names)
+            for i=1:length(classes)
+                classes{i}.TestData(classes{i}.Probablility*pts).PlotCluster(colours{i})
+                hold on;
+                classes{i}.PlotStdDev(colours{i});
+                hold on;
+            end
+            
+            med = Transformation.BoundMatrixMED(classes, x_range, y_range);
+            ged = Transformation.BoundMatrixGED(classes, x_range, y_range);
+            map = Transformation.BoundMatrixMAP(classes, x_range, y_range);
+            
+            bounds = {med ged map};
+            bound_colours = {'red' 'blue' 'black'};
+            
+            for i=1:length(bounds)
+                contour(x_range, y_range, bounds{i}', contours, bound_colours{i}, 'LineWidth', 1)
+                hold on;
+            end
+            
+            legend(names)
+        end
+        
+        function t = TestData(PC, n_pts)
+            t = NonParametricClass(PC.Mu, PC.Sigma, n_pts);
+        end
+        
+        function PlotStdDev(Class, colour)
+            x=Class.Mu(1);
+            y=Class.Mu(2);
+            [V,D]= eig(PC.Sigma);
+            rta = sqrt(D(1,1));
+            rtc = sqrt(D(2,2)); 
+            
+            theta = atan(V(2,1)/V(1,1));
+            PlotEllipse(x,y,theta,rta,rtc,colour);
+        end
+        
+        %% Distance Calculations
+        % MED
+        function d = MED(Class, point)
+            d = (point - Class.Mu)'*(point - Class.Mu); %dist squared
+        end
+        
+        % GED
+        function d = GED(Class, point)
+            d = (point - Class.Mu)'*Class.Sigma^(-1)*(point - Class.Mu); %dist squared
+        end
+        
+        function p = MAP(Class, point)
+           p = Class.Probability * sqrt(2 * pi * det(Class.Sigma))^(-1) * exp(-0.5 * Class.GED(point));
+        
+        %% Boundary Plotting Methods
+        % Plot boundary based on MED
+        function map = BoundMatrixMED(classes, x_pts, y_pts)
+           map = zeros(length(x_pts),length(y_pts));
+           for i = 1:length(x_pts)
+               for j = 1:length(y_pts)
+                   map(i,j) = Transformation.ClassifyMED([x_pts(i) y_pts(j)]', classes);
+               end
+           end
+        end
+        
+        % Plot boundary based on GED
+        function map = BoundMatrixGED(classes, x_pts, y_pts)
+           map = zeros(length(x_pts),length(y_pts));
+           for i = 1:length(x_pts)
+               for j = 1:length(y_pts)
+                   map(i,j) = Transformation.ClassifyGED([x_pts(i) y_pts(j)]', classes);
+               end
+           end
+        end
+        
+        % Plot boundary based on MAP
+        function map = BoundMatrixMAP(classes, x_pts, y_pts)
+           map = zeros(length(x_pts),length(y_pts));
+           for i = 1:length(x_pts)
+               for j = 1:length(y_pts)
+                   map(i,j) = Transformation.ClassifyMAP([x_pts(i) y_pts(j)]', classes);
+               end
+           end
+        end
+        
+        function PlotEllipse(x,y,a,b,theta,colour)
+            np = 100;
+            angle = [0:np]*2*pi/np;
+            pts = [x;y]*ones(size(angle)) + [cos(theta) -sin(theta); 
+                sin(theta) cos(theta)]*[cos(angle)*a; sin(angle)*b];
+            plot( pts(1,:), pts(2,:), colour);
+        end
+    end
+end
+        
+            
+            
+        
