@@ -15,7 +15,6 @@ classdef Classifier
             class.cluster = gaussTransform(randn(size,2),class.mu,class.sigma);
         end
         
-        %Plot Functions
         function plotStdDev(class, colour)
             x=class.mu(1);
             y=class.mu(2);

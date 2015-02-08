@@ -7,17 +7,22 @@ ClassD = ParametricClass([15;10], [8 0; 0 8], 200/450);
 ClassE = ParametricClass([10;5], [10 -5; -5 20], 150/450);
 
 figure;
-colours = {'red' 'blue'};
-classes = {ClassA ClassB};
-pts = 400;
-names = {'A' '\sigma_A' 'B' '\sigma_B' 'MED' 'GED' 'MAP'};
 
-x_range = -5:0.2:20;
-y_range = 4:0.2:20;
-contours = 1.5;
+n_pts = 450;
+colours = {'red' 'blue' 'green'};
+classes = {ClassC ClassD ClassE};
 
-Tools.ParametricPlot(classes, colours, pts, x_range, y_range, contours, names);
+% Plot bounds
+x_range =  -20:0.2:30;
+y_range = -10:0.2:35;
+contours = [1.5 2.5];
 
-training = [1 1; 2 2; 3 3; 4 4; 5 5; 6 6; 7 7; 8 8; 9 9; 10 10];
-classes = [1; 2; 3; 4; 5; 6; 7; 8; 9; 10];
-disp(k_nearest_neighbor(100, 100, training, classes, 1));
+Tools.ParametricPlot(classes, colours, n_pts, x_range, y_range, contours, {'C' '\sigma_C' 'D' '\sigma_D' 'E' '\sigma_E' 'MED' 'GED' 'MAP'})
+
+figure;
+
+%Plot KNN and NN
+x_range =  -1:0.15:25;
+y_range = -6:0.15:28;
+
+Tools.NonParametricPlot(classes, colours, n_pts, x_range, y_range, contours, {'C' 'D' 'E' 'NN' '5NN'})

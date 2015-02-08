@@ -2,7 +2,7 @@
 % start at grid position and expand from there until k neighbors are found
 
 function G = k_nearest_neighbor(x_length, y_length, training, classes, k)
-scale = 0.1;
+scale = 1;
 
 % grid = zeros(x_length, y_length)
 
