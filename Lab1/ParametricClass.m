@@ -31,7 +31,7 @@ classdef ParametricClass
 
             theta = atan(V(2,1)/V(1,1));
             
-            PlotEllipse(x,y,theta,rta,rtc, colour)
+            ParametricClass.PlotEllipse(x,y,theta,rta,rtc, colour)
         end
         
         %% Distance Calculations
@@ -176,6 +176,16 @@ classdef ParametricClass
             correct = diag(diag(confusion));
             incorrect = confusion - correct;
             prob = sum(sum(incorrect)) / sum(sum(confusion));
+        end
+        
+        function PlotEllipse(x,y,theta,a,b, colour)
+
+        if nargin<5, error('Too few arguments to Plot_Ellipse.'); end;
+
+        np = 100;
+        ang = [0:np]*2*pi/np;
+        pts = [x;y]*ones(size(ang)) + [cos(theta) -sin(theta); sin(theta) cos(theta)]*[cos(ang)*a; sin(ang)*b];
+        plot( pts(1,:), pts(2,:), colour);
         end
     end
 end
