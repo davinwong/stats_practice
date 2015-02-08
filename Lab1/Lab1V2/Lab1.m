@@ -3,15 +3,27 @@ clear;
 
 N_A = 200;
 N_B = 200;
+N_C = 100;
+N_D = 200;
+N_E = 150;
 
-mu_A = [ 5;10];
-mu_B = [10;15];
+mu_A = [  5 ; 10 ];
+mu_B = [ 10 ; 15 ];
+mu_C = [  5 ; 10 ];
+mu_D = [ 15 ; 10 ];
+mu_E = [ 10 ;  5 ];
 
 Sigma_A = [ 8  0;  0  4];
 Sigma_B = [ 8  0;  0  4];
+Sigma_C = [ 8  4;  4 40];
+Sigma_D = [ 8  0;  0  8];
+Sigma_E = [10 -5; -5 20];
 
 ClassA = Classifier(mu_A,Sigma_A, 0.5, N_A);
 ClassB = Classifier(mu_B,Sigma_B, 0.5, N_B);
+ClassC = Classifier(mu_C,Sigma_C, 0.5, N_C);
+ClassD = Classifier(mu_D,Sigma_D, 0.5, N_D);
+ClassE = Classifier(mu_E,Sigma_E, 0.5, N_E);
 
 figure;
 colours = {'red' 'blue'};
@@ -23,6 +35,7 @@ x_range = -5:0.2:20;
 y_range = 4:0.2:20;
 contours = 1.5;
 
+%{
 for i=1:length(classes)
     classes{i}.plotData(colours{i});
     hold on;
@@ -42,3 +55,35 @@ for i=1:length(bounds)
 end
 
 legend(names)
+%}
+
+
+training = vertcat(ClassA.cluster,ClassB.cluster);
+nn_classes_A = zeros(length(ClassA.cluster),1);
+nn_classes_B = zeros(length(ClassB.cluster),1);
+nn_classes_B = nn_classes_B+1;
+nn_classes = vertcat(nn_classes_A, nn_classes_B);
+
+nn = k_nearest_neighbor(200, 200, training, nn_classes, 1);
+disp(nn);
+
+contour(x_range, y_range, nn, contours, 'black', ...
+    'LineWidth', 1)
+hold on;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
