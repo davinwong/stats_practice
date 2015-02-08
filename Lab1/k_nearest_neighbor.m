@@ -6,20 +6,44 @@ scale = 0.1;
 
 % grid = zeros(x_length, y_length)
 
+% for every grid point
 for x=1:x_length
 	for y=1:y_length
-		best_class = 0;
-		closest = 9999999999;
+		% k rows for k points
+		% first column: classes
+		% second column: distance
+		k_best_points = zeros(k, 2);
 
-		for d=1:length(training)
-			square_distance = (scale*x - training(d,1))^2 + (scale*y - training(d,2))^2;
-			if square_distance < closest
-				closest = square_distance;
-				best_class = classes(d);
+		% initialize k best points
+		for p=1:k
+			current_distance = (scale*x - training(p,1))^2 + (scale*y - training(p,2))^2;
+			k_best_points(p, 1) = classes(p);
+			k_best_points(p, 2) = current_distance;
+		end
+
+		% calculate distance from grid point to each training point
+		% store the k-best training points (with class)
+		for p=k:length(training)
+			current_class = classes(p);
+			current_distance = (scale*x - training(p,1))^2 + (scale*y - training(p,2))^2;
+
+			for b=1:k
+				if current_distance < k_best_points(b, 2)
+					temp_class = k_best_points(b, 1);
+					temp_distance = k_best_points(b, 2);
+
+					k_best_points(b, 1) = current_class;
+					k_best_points(b, 2) = current_distance;
+
+					current_class = temp_class;
+					current_distance = temp_distance;
+
+				end
 			end
 		end
 
-		grid(x,y) = best_class;
+		% of the best/closest points, the most frequent is the class given to the grid
+		grid(x,y) = mode(k_best_points(1));
 	end
 end
 
