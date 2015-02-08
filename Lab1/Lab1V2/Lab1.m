@@ -73,8 +73,13 @@ hold on;
 
 
 
+training = [1 1; 2 2; 3 3; 4 4; 5 5; 6 6; 7 7; 8 8; 9 9; 10 10];
+classes = [1; 2; 3; 4; 5; 6; 7; 8; 9; 10];
 
 
+[nn_X,nn_Y,nn_Z] = k_nearest_neighbor(-4:.1:20, -4:.1:20, training, classes, 1);
+
+contour(nn_X, nn_Y, nn_Z);
 
 
 
