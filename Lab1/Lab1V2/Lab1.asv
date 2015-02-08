@@ -1,0 +1,91 @@
+
+clear;
+
+N_A = 200;
+N_B = 200;
+
+mu_A = [ 5;10];
+mu_B = [10;15];
+
+Sigma_A = [ 8  0;  0  4];
+Sigma_B = [ 8  0;  0  4];
+
+ClassA = Classifier(mu_A,Sigma_A, 0.5, N_A);
+ClassB = Classifier(mu_B,Sigma_B, 0.5, N_B);
+
+figure;
+colours = {'red' 'blue'};
+classes = {ClassA ClassB};
+pts = 400;
+names = {'A' '\sigma_A' 'B' '\sigma_B' 'MED' 'GED' 'MAP'};
+
+x_range = -5:0.2:20;
+y_range = 4:0.2:20;
+contours = 1.5;
+
+for i=1:length(classes)
+    classes{i}.plotData(colours{i});
+    hold on;
+    classes{i}.plotStdDev(colours{i})
+    hold on;
+end
+
+med = Classifier.medClassifier(classes,x_range,y_range);
+ged = Classifier.gedClassifier(classes,x_range,y_range);
+%map = Classifier.mapClassifier(classes,x_range,y_range);
+
+bounds = {med ged};
+bound_colours = {'black' 'b'};
+for i=1:length(bounds)
+    contour(x_range, y_range, bounds{i}', contours, bound_colours{i}, 'LineWidth', 1)
+    hold on;
+end
+
+legend(names)
+
+    
+
+
+%Tools.ParametricPlot(classes, colours, pts, x_range, y_range, contours, names);
+
+
+
+%{
+close all; clear; clc;
+
+VISIBLE_FLAG = 0;
+
+% constants
+unitContourSize = 10000;
+%gridSize = 0.02;
+gridSize = 0.05;
+% gridSize = 0.5;
+fontSize = 10;
+figSize = [0 0 6 4];% [something, something, width, height]
+shadeVal=0.07;
+
+% Cluster data
+N_A = 200;
+N_B = 200;
+N_C = 100;
+N_D = 200;
+N_E = 150;
+
+mu_A = [ 5 10];
+mu_B = [10 15];
+mu_C = [ 5 10];
+mu_D = [15 10];
+mu_E = [10  5];
+
+Sigma_A = [ 8  0;  0  4];
+Sigma_B = [ 8  0;  0  4];
+Sigma_C = [ 8  4;  4 40];
+Sigma_D = [ 8  0;  0  8];
+Sigma_E = [10 -5; -5 20];
+
+A = gaussTransform(randn(N_A,2),mu_A,Sigma_A);
+B = gaussTransform(randn(N_B,2),mu_B,Sigma_B);
+C = gaussTransform(randn(N_C,2),mu_C,Sigma_C);
+D = gaussTransform(randn(N_D,2),mu_D,Sigma_D);
+E = gaussTransform(randn(N_E,2),mu_E,Sigma_E);
+%}
