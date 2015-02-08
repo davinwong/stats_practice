@@ -15,7 +15,6 @@ classdef Classifier
             class.cluster = gaussTransform(randn(size,2),class.mu,class.sigma);
         end
         
-        %Plot Functions
         function plotStdDev(class, colour)
             x=class.mu(1);
             y=class.mu(2);
@@ -37,75 +36,56 @@ classdef Classifier
             y = class.cluster*[0;1];
             scatter(x,y,5,strcat('*',colour));
         end
-    
-    %% Distance Calculations
-        % MED
-        function d = MED(class, point)
-            d = (point - class.mu)'*(point - class.mu); %dist squared
-        end
-        
-        % GED
-        function d = GED(class, point)
-            d = (point - class.mu)'*class.sigma^(-1)*(point - class.mu);
-        end
-        
-        function p = MAP(class, point)
-           p = class.Probability * sqrt(2 * pi * det(class.sigma))^(-1) * exp(-0.5 * class.GED(point)); %probability-ish
-        end
     end
     
     methods (Static = true)
-        %Classifiers
         
-        function map = BoundMatrixMED(classes, x_pts, y_pts)
-           map = zeros(length(x_pts),length(y_pts));
-           for i = 1:length(x_pts)
-               for j = 1:length(y_pts)
-                    c = 0; %The class index
-                    d = Inf; %The distance
-                    for k = 1:length(classes)
-                        point = [x_pts(i) y_pts(j)]';
-                        med = (point - classes{k}.mu)'*(point - class.mu);
-                        if med <= d
-                           c = i;
-                           d = classes{k}.MED(point);
-                        end
-                    end
-                    map(i,j) = c;
+        function c = medDistance(classes, point)
+            c = 0;
+            d = Inf;
+            for k = 1:length(classes)
+                medDist = (point - classes{k}.mu)'*(point - classes{k}.mu);
+                if medDist <= d
+                   c = k;
+                   d = medDist;
+                end
+            end
+        end
+        
+        function map = medClassifier(classes, x, y)
+           map = zeros(length(x),length(y));
+           for i = 1:length(x)
+               for j = 1:length(y)
+                    c = 0; 
+                    d = Inf; 
+                    point = [x(i) y(j)]';
+                    
+                   map(i,j) = Classifier.medDistance(classes,point);
                end
            end
         end
         
-        function c = medClassifier(point, classes)
-            c = 0; %The class index
-            d = Inf; %The distance
-            for i = 1:length(classes)
-                if classes{i}.MED(point) <= d
-                   c = i;
-                   d = classes{i}.MED(point);
-                end
-            end
-        end
-        
-        function map = gedClassifier(classes, x_pts, y_pts)
-            map = zeros(length(x_pts),length(y_pts));
-            for i = 1:length(x_pts)
-                for j = 1:length(y_pts)
-                    c = 0; %The class index
-                    d = Inf; %The distance
-                    point = [x_pts(i) y_pts(j)];
+        function map = gedClassifier(classes, x, y)
+           map = zeros(length(x),length(y));
+           for i = 1:length(x)
+               for j = 1:length(y)
+                    c = 0; 
+                    d = Inf; 
+                    point = [x(i) y(j)]';
                     for k = 1:length(classes)
-                        if classes{k}.GED(point) <= d
-                        c = k;
-                        d = classes{k}.GED(point);
+                        gedDist = (point - classes{k}.mu)'*classes{k}...
+                            .sigma^(-1)*(point - classes{k}.mu);
+                        if gedDist <= d
+                           c = k;
+                           d = gedDist;
                         end
                     end
-                    map(i,j) = c;
-                end
-            end
+                   map(i,j) = c;
+               end
+           end
         end
         
-        function map = maclasslassifier(classes, x, y)
+        function map = mapClassifier(classes, x, y)
             map = zeros(length(x),length(y));
             for i = 1:length(x)
                 for j = 1:length(y)
@@ -113,11 +93,13 @@ classdef Classifier
                     d = 0;
                     point = [x(i) y(j)]';
                     for k = 1:length(classes)
-                        t = classes{k}.prob * sqrt(2 * pi * det(classes{k}...
-                            .sigma))^(-1) * exp(-.5 * classes{k}.ged(point));
-                        if t >= d
-                            m = i;
-                            d = t;
+                        gedDist = (point - classes{k}.mu)'*classes{k}...
+                            .sigma^(-1)*(point - classes{k}.mu);
+                        mapDist = classes{k}.prob * sqrt(2 * pi * det(classes{k}...
+                            .sigma))^(-1) * exp(-.5 * gedDist);
+                        if mapDist >= d
+                            m = k;
+                            d = mapDist;
                         end
                     end
                     map(i,j) = m;

@@ -40,21 +40,24 @@ classdef Classifier
     
     methods (Static = true)
         
+        function c = medDistance(classes, point)
+            c = 0;
+            d = Inf;
+            for k = 1:length(classes)
+                medDist = (point - classes{k}.mu)'*(point - classes{k}.mu);
+                if medDist <= d
+                   c = k;
+                   d = medDist;
+                end
+            end
+        end
+        
         function map = medClassifier(classes, x, y)
            map = zeros(length(x),length(y));
            for i = 1:length(x)
                for j = 1:length(y)
-                    c = 0; 
-                    d = Inf; 
                     point = [x(i) y(j)]';
-                    for k = 1:length(classes)
-                        medDist = (point - classes{k}.mu)'*(point - classes{k}.mu);
-                        if medDist <= d
-                           c = k;
-                           d = medDist;
-                        end
-                    end
-                   map(i,j) = c;
+                    map(i,j) = Classifier.medDistance(classes,point);
                end
            end
         end

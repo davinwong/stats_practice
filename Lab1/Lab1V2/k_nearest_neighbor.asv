@@ -7,8 +7,8 @@ scale = 1;
 [X,Y] = meshgrid(X_scale, Y_scale);
 
     % for every grid point
-    for x=1:(length(X))
-        for y=1:(length(Y))
+    for x=1:(length(X)-1)
+        for y=1:(length(Y)-1)
             % k rows for k points
             % first column: classes
             % second column: distance
@@ -43,7 +43,7 @@ scale = 1;
             end
 
             % of the best/closest points, the most frequent is the class given to the grid
-            Z(x,y) = mode(k_best_points(:,1));
+            Z(x,y) = mode(k_best_points(1));
         end
     end
 
