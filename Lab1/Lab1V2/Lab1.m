@@ -25,9 +25,9 @@ Sigma_E = [10 -5; -5 20];
 %Initialize classifiers, produces sample cluster data
 ClassA = Classifier(mu_A,Sigma_A, 0.5, N_A);
 ClassB = Classifier(mu_B,Sigma_B, 0.5, N_B);
-ClassC = Classifier(mu_C,Sigma_C, 0.5, N_C);
-ClassD = Classifier(mu_D,Sigma_D, 0.5, N_D);
-ClassE = Classifier(mu_E,Sigma_E, 0.5, N_E);
+ClassC = Classifier(mu_C,Sigma_C, 100/400, N_C);
+ClassD = Classifier(mu_D,Sigma_D, 200/400, N_D);
+ClassE = Classifier(mu_E,Sigma_E, 150/400, N_E);
 
 
 
@@ -172,7 +172,7 @@ actual_A = zeros(length(ClassA.cluster),1);
 actual_B = zeros(length(ClassB.cluster),1);
 actual_B = actual_B+1;
 
-actual_AB = vertcat(actual_A,actual_B);
+actual_CDE = vertcat(actual_A,actual_B);
 predicted_AB_med = zeros(length(training),1);
 predicted_AB_ged = zeros(length(training),1);
 predicted_AB_map = zeros(length(training),1);
@@ -187,9 +187,9 @@ for  i = 1:length(predicted_AB_med)
 end
 
 %Calculates confusion matrix given sample data and actual data
-[matrix_ab_med,order_ab_med] = confusionmat(actual_AB,predicted_AB_med);
-[matrix_ab_ged,order_ab_ged] = confusionmat(actual_AB,predicted_AB_ged);
-[matrix_ab_map,order_ab_map] = confusionmat(actual_AB,predicted_AB_map);
+[matrix_ab_med,order_ab_med] = confusionmat(actual_CDE,predicted_AB_med);
+[matrix_ab_ged,order_ab_ged] = confusionmat(actual_CDE,predicted_AB_ged);
+[matrix_ab_map,order_ab_map] = confusionmat(actual_CDE,predicted_AB_map);
 
 %Sums total number of errors for each confusion matrix
 total_num_error_ab_med = (matrix_ab_med(2,2) + matrix_ab_med(1,3)); 
@@ -201,7 +201,44 @@ exp_error_rate_ab_med = total_num_error_ab_med / length(training);
 exp_error_rate_ab_ged = total_num_error_ab_ged / length(training); 
 exp_error_rate_ab_map = total_num_error_ab_map / length(training); 
 
+%Confusion matrix for NN/kNN
+training = vertcat(ClassA.cluster,ClassB.cluster);
+actual_A = zeros(length(ClassA.cluster),1);
+actual_B = zeros(length(ClassB.cluster),1);
+actual_B= actual_B+1;
 
+%New sample data
+ClassX = Classifier(mu_A,Sigma_A, 0.5, N_A);
+ClassY = Classifier(mu_B,Sigma_B, 0.5, N_B);
+
+new_training = vertcat(ClassX.cluster, ClassY.cluster);
+
+actual_CDE = vertcat(actual_A, actual_B);
+predicted_AB = zeros(length(training),1);
+for  i = 1:length(predicted_AB)
+    predicted_AB(i) = single_knn(new_training(i,1), new_training(i,2), training, actual_CDE, 1);
+end
+
+[matrix_AB_NN,order_AB_NN] = confusionmat(actual_CDE,predicted_AB);
+
+training = vertcat(ClassA.cluster,ClassB.cluster);
+actual_A = zeros(length(ClassA.cluster),1);
+actual_B = zeros(length(ClassB.cluster),1);
+actual_B= actual_B+1;
+
+%New sample data
+ClassX = Classifier(mu_A,Sigma_A, 0.5, N_A);
+ClassY = Classifier(mu_B,Sigma_B, 0.5, N_B);
+
+new_training = vertcat(ClassX.cluster, ClassY.cluster);
+
+actual_CDE = vertcat(actual_A, actual_B);
+predicted_AB = zeros(length(training),1);
+for  i = 1:length(predicted_AB)
+    predicted_AB(i) = single_knn(new_training(i,1), new_training(i,2), training, actual_CDE, 5);
+end
+
+[matrix_AB_kNN,order_AB_kNN] = confusionmat(actual_CDE,predicted_AB);
 
 
 %Confusion Matrix and Experimental Error Rate Class C/D/E
@@ -248,27 +285,65 @@ exp_error_rate_CDE_med = total_num_error_CDE_med / length(training);
 exp_error_rate_CDE_ged = total_num_error_CDE_ged / length(training); 
 exp_error_rate_CDE_map = total_num_error_CDE_map / length(training); 
 
+%NN confusion matrix for class CDE
+training = vertcat(ClassC.cluster,ClassD.cluster,ClassE.cluster);
+actual_C = zeros(length(ClassC.cluster),1);
+actual_D = zeros(length(ClassD.cluster),1);
+actual_E = zeros(length(ClassE.cluster),1);
+actual_D = actual_D+1;
+actual_E = actual_E+2;
 
-%{
-classes = {ClassA ClassB};
-training = vertcat(ClassA.cluster,ClassB.cluster);
-actual_A = zeros(length(ClassA.cluster),1);
-actual_B = zeros(length(ClassB.cluster),1);
-actual_B= actual_B+1;
+ClassX = Classifier(mu_C,Sigma_C, 100/400, N_C);
+ClassY = Classifier(mu_D,Sigma_D, 200/400, N_D);
+ClassZ = Classifier(mu_E,Sigma_E, 150/400, N_E);
 
-ClassX = Classifier(mu_A,Sigma_A, 0.5, N_A);
-ClassY = Classifier(mu_A,Sigma_A, 0.5, N_A);
+new_training = vertcat(ClassX.cluster, ClassY.cluster, ClassZ.cluster);
 
-new_training = vertcat(ClassX.cluster, ClassY.cluster);
-
-actual_AB = vertcat(actual_A, actual_B);
-predicted_AB = zeros(length(training),1);
-for  i = 1:length(predicted_AB)
-    predicted_AB(i) = single_knn(new_training(i,1), new_training(i,2), training, actual_AB, 5);
+actual_CDE = vertcat(actual_C, actual_D, actual_E);
+predicted_CDE = zeros(length(training),1);
+for  i = 1:length(predicted_CDE)
+    predicted_CDE(i) = single_knn(new_training(i,1), new_training(i,2), training, actual_CDE, 1);
 end
 
-[matrix,order] = confusionmat(actual_AB,predicted_AB);
-%}
+[matrix_CDE_NN,order_CDE_NN] = confusionmat(actual_CDE, predicted_CDE);
+
+%Error rate calculations
+total_num_error_CDE_NN = (matrix_CDE_NN(0,2) + matrix_CDE_NN(0,3) +...
+    matrix_CDE_NN(1,1) + matrix_CDE_NN(1,3) +...
+    matrix_CDE_NN(2,1) + matrix_CDE_NN(2,2)); 
+exp_error_rate_CDE_NN = total_num_error_CDE_NN / length(training); 
+disp(matrix_CDE_NN);
+disp(exp_error_rate_CDE_NN);
+
+%kNN confusion matrix for Class CDE
+training = vertcat(ClassC.cluster,ClassD.cluster,ClassE.cluster);
+actual_C = zeros(length(ClassC.cluster),1);
+actual_D = zeros(length(ClassD.cluster),1);
+actual_E = zeros(length(ClassE.cluster),1);
+actual_D = actual_D+1;
+actual_E = actual_E+2;
+
+ClassX = Classifier(mu_C,Sigma_C, 100/400, N_C);
+ClassY = Classifier(mu_D,Sigma_D, 200/400, N_D);
+ClassZ = Classifier(mu_E,Sigma_E, 150/400, N_E);
+
+new_training = vertcat(ClassX.cluster, ClassY.cluster, ClassZ.cluster);
+
+actual_CDE = vertcat(actual_C, actual_D, actual_E);
+predicted_CDE = zeros(length(training),1);
+for  i = 1:length(predicted_CDE)
+    predicted_CDE(i) = single_knn(new_training(i,1), new_training(i,2), training, actual_CDE, 1);
+end
+
+[matrix_CDE_kNN,order_CDE_kNN] = confusionmat(actual_CDE, predicted_CDE);
+
+%Error rate calculations
+total_num_error_CDE_kNN = (matrix_CDE_kNN(0,2) + k(0,3) +...
+    matrix_CDE_kNN(1,1) + matrix_CDE_kNN(1,3) +...
+    matrix_CDE_kNN(2,1) + matrix_CDE_kNN(2,2)); 
+exp_error_rate_CDE_kNN = total_num_error_CDE_kNN / length(training); 
+disp(matrix_CDE_kNN);
+disp(exp_error_rate_CDE_kNN);
 
 
 

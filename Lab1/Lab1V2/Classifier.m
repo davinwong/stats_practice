@@ -12,7 +12,7 @@ classdef Classifier
             class.mu = mu;
             class.sigma = sigma;
             class.prob = prob;
-            class.cluster = gaussTransform(randn(size,2),class.mu,class.sigma);
+            class.cluster = Classifier.gaussTransform(randn(size,2),class.mu,class.sigma);
         end
         
         function plotStdDev(class, colour)
@@ -39,6 +39,11 @@ classdef Classifier
     end
     
     methods (Static = true)
+        
+        function A = gaussTransform(in, mu, Sigma)
+            R = chol(Sigma);
+            A = repmat(mu',length(in),1)+in*R;
+        end
         
         function c = medDistance(classes, point)
             c = 0;
