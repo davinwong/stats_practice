@@ -62,44 +62,50 @@ classdef Classifier
            end
         end
         
+        function c = gedDistance(classes,point)
+            c = 0; 
+            d = Inf; 
+            for k = 1:length(classes)
+                gedDist = (point - classes{k}.mu)'*classes{k}...
+                    .sigma^(-1)*(point - classes{k}.mu);
+                if gedDist <= d
+                   c = k;
+                   d = gedDist;
+                end
+            end
+        end
+                
         function map = gedClassifier(classes, x, y)
            map = zeros(length(x),length(y));
            for i = 1:length(x)
                for j = 1:length(y)
-                    c = 0; 
-                    d = Inf; 
-                    point = [x(i) y(j)]';
-                    for k = 1:length(classes)
-                        gedDist = (point - classes{k}.mu)'*classes{k}...
-                            .sigma^(-1)*(point - classes{k}.mu);
-                        if gedDist <= d
-                           c = k;
-                           d = gedDist;
-                        end
-                    end
-                   map(i,j) = c;
+                   point = [x(i) y(j)]';
+                   map(i,j) = Classifier.gedDistance(classes,point);
                end
            end
+        end
+        
+        function m = mapDistance(classes,point)
+            m = 0;
+            d = 0;
+            for k = 1:length(classes)
+                gedDist = (point - classes{k}.mu)'*classes{k}.sigma^(-1)...
+                    *(point - classes{k}.mu);
+                mapDist = classes{k}.prob * sqrt(2 * pi * det(classes{k}...
+                    .sigma))^(-1) * exp(-.5 * gedDist);
+                if mapDist >= d
+                    m = k;
+                    d = mapDist;
+                end
+            end
         end
         
         function map = mapClassifier(classes, x, y)
             map = zeros(length(x),length(y));
             for i = 1:length(x)
                 for j = 1:length(y)
-                    m = 0;
-                    d = 0;
                     point = [x(i) y(j)]';
-                    for k = 1:length(classes)
-                        gedDist = (point - classes{k}.mu)'*classes{k}...
-                            .sigma^(-1)*(point - classes{k}.mu);
-                        mapDist = classes{k}.prob * sqrt(2 * pi * det(classes{k}...
-                            .sigma))^(-1) * exp(-.5 * gedDist);
-                        if mapDist >= d
-                            m = k;
-                            d = mapDist;
-                        end
-                    end
-                    map(i,j) = m;
+                    map(i,j) = Classifier.mapDistance(classes,point);
                 end
             end
         end

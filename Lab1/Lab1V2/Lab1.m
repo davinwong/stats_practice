@@ -1,31 +1,35 @@
 
 clear;
 
+%Sizes
 N_A = 200;
 N_B = 200;
 N_C = 100;
 N_D = 200;
 N_E = 150;
 
+%Mean
 mu_A = [  5 ; 10 ];
 mu_B = [ 10 ; 15 ];
 mu_C = [  5 ; 10 ];
 mu_D = [ 15 ; 10 ];
 mu_E = [ 10 ;  5 ];
 
+%Sample Variance
 Sigma_A = [ 8  0;  0  4];
 Sigma_B = [ 8  0;  0  4];
 Sigma_C = [ 8  4;  4 40];
 Sigma_D = [ 8  0;  0  8];
 Sigma_E = [10 -5; -5 20];
 
+%Initialize classifiers, produces sample cluster data
 ClassA = Classifier(mu_A,Sigma_A, 0.5, N_A);
 ClassB = Classifier(mu_B,Sigma_B, 0.5, N_B);
 ClassC = Classifier(mu_C,Sigma_C, 0.5, N_C);
 ClassD = Classifier(mu_D,Sigma_D, 0.5, N_D);
 ClassE = Classifier(mu_E,Sigma_E, 0.5, N_E);
 
-%{
+
 
 %Class A/B MED, GED, MAP
 figure;
@@ -49,9 +53,10 @@ for i=1:length(classes)
 end
 
 bounds = {med ged map};
-bound_colours = {'black' 'cyan' 'yellow'};
+bound_colours = {'black' 'cyan' ':yellow'};
 for i=1:length(bounds)
-    contour(x_range, y_range, bounds{i}', contours, bound_colours{i}, 'LineWidth', 1)
+    contour(x_range, y_range, bounds{i}', contours, bound_colours{i}, ...
+        'LineWidth', 1)
     hold on;
 end
 
@@ -63,7 +68,7 @@ figure;
 
 x_range = -5:0.2:20;
 contours = 1;
-names = {'NN' '5 NN'};
+names = {'NN' '5 NN' 'A' 'B' 'StdDev A' 'StdDev B'};
 
 training = vertcat(ClassA.cluster,ClassB.cluster);
 nn_classes_A = zeros(length(ClassA.cluster),1);
@@ -128,7 +133,7 @@ figure;
 
 x_range =  -5:0.2:30;
 contours = 1;
-names = {'NN' '5 NN'};
+names = {'NN' '5 NN' 'C' 'D' 'E' 'StdDev C' 'StdDev D' 'StdDev E' };
 
 training = vertcat(ClassC.cluster,ClassD.cluster, ClassE.cluster);
 nn_classes_C = zeros(length(ClassA.cluster),1);
@@ -160,24 +165,110 @@ hold on;
 ClassE.plotStdDev('green');
 legend(names);
 
-%}
+%Confusion Matrix and Experimental Error Rate Class A/B
+classes = {ClassA ClassB};
+training = vertcat(ClassA.cluster,ClassB.cluster);
+actual_A = zeros(length(ClassA.cluster),1);
+actual_B = zeros(length(ClassB.cluster),1);
+actual_B = actual_B+1;
 
-%Confusion Matrix Class A/B
+actual_AB = vertcat(actual_A,actual_B);
+predicted_AB_med = zeros(length(training),1);
+predicted_AB_ged = zeros(length(training),1);
+predicted_AB_map = zeros(length(training),1);
+
+for  i = 1:length(predicted_AB_med)
+    predicted_AB_med(i) = Classifier.medDistance(classes,...
+        [training(i,1) training(i,2)]');
+    predicted_AB_ged(i) = Classifier.gedDistance(classes,...
+        [training(i,1) training(i,2)]');
+    predicted_AB_map(i) = Classifier.mapDistance(classes,...
+        [training(i,1) training(i,2)]');
+end
+
+%Calculates confusion matrix given sample data and actual data
+[matrix_ab_med,order_ab_med] = confusionmat(actual_AB,predicted_AB_med);
+[matrix_ab_ged,order_ab_ged] = confusionmat(actual_AB,predicted_AB_ged);
+[matrix_ab_map,order_ab_map] = confusionmat(actual_AB,predicted_AB_map);
+
+%Sums total number of errors for each confusion matrix
+total_num_error_ab_med = (matrix_ab_med(2,2) + matrix_ab_med(1,3)); 
+total_num_error_ab_ged = (matrix_ab_ged(2,2) + matrix_ab_ged(1,3)); 
+total_num_error_ab_map = (matrix_ab_map(2,2) + matrix_ab_map(1,3)); 
+
+%Divides total num errors with total data points for error rate
+exp_error_rate_ab_med = total_num_error_ab_med / length(training); 
+exp_error_rate_ab_ged = total_num_error_ab_ged / length(training); 
+exp_error_rate_ab_map = total_num_error_ab_map / length(training); 
+
+
+
+
+%Confusion Matrix and Experimental Error Rate Class C/D/E
+classes = {ClassC ClassD ClassE};
+training = vertcat(ClassC.cluster,ClassD.cluster,ClassE.cluster);
+actual_C = zeros(length(ClassC.cluster),1);
+actual_D = zeros(length(ClassD.cluster),1);
+actual_E = zeros(length(ClassE.cluster),1);
+actual_D = actual_D+1;
+actual_E = actual_E+2;
+
+actual_CDE = vertcat(actual_C,actual_D,actual_E);
+predicted_CDE_med = zeros(length(training),1);
+predicted_CDE_ged = zeros(length(training),1);
+predicted_CDE_map = zeros(length(training),1);
+
+for  i = 1:length(predicted_CDE_med)
+    predicted_CDE_med(i) = Classifier.medDistance(classes,...
+        [training(i,1) training(i,2)]');
+    predicted_CDE_ged(i) = Classifier.gedDistance(classes,...
+        [training(i,1) training(i,2)]');
+    predicted_CDE_map(i) = Classifier.mapDistance(classes,...
+        [training(i,1) training(i,2)]');
+end
+
+%Calculates confusion matrix given sample data and actual data
+[matrix_CDE_med,order_CDE_med] = confusionmat(actual_CDE,predicted_CDE_med);
+[matrix_CDE_ged,order_CDE_ged] = confusionmat(actual_CDE,predicted_CDE_ged);
+[matrix_CDE_map,order_CDE_map] = confusionmat(actual_CDE,predicted_CDE_map);
+
+%Sums total number of errors for each confusion matrix
+total_num_error_CDE_med = (matrix_CDE_med(1,3) + matrix_CDE_med(1,4) +...
+    matrix_CDE_med(2,2) + matrix_CDE_med(2,4) +...
+    matrix_CDE_med(3,2) + matrix_CDE_med(3,3)); 
+total_num_error_CDE_ged = (matrix_CDE_ged(1,3) + matrix_CDE_ged(1,4) +...
+    matrix_CDE_ged(2,2) + matrix_CDE_ged(2,4) +...
+    matrix_CDE_ged(3,2) + matrix_CDE_ged(3,3)); 
+total_num_error_CDE_map = (matrix_CDE_map(1,3) + matrix_CDE_map(1,4) +...
+    matrix_CDE_map(2,2) + matrix_CDE_map(2,4) +...
+    matrix_CDE_map(3,2) + matrix_CDE_map(3,3)); 
+
+%Divides total num errors with total data points for error rate
+exp_error_rate_CDE_med = total_num_error_CDE_med / length(training); 
+exp_error_rate_CDE_ged = total_num_error_CDE_ged / length(training); 
+exp_error_rate_CDE_map = total_num_error_CDE_map / length(training); 
+
+
+%{
 classes = {ClassA ClassB};
 training = vertcat(ClassA.cluster,ClassB.cluster);
 actual_A = zeros(length(ClassA.cluster),1);
 actual_B = zeros(length(ClassB.cluster),1);
 actual_B= actual_B+1;
 
+ClassX = Classifier(mu_A,Sigma_A, 0.5, N_A);
+ClassY = Classifier(mu_A,Sigma_A, 0.5, N_A);
+
+new_training = vertcat(ClassX.cluster, ClassY.cluster);
+
 actual_AB = vertcat(actual_A, actual_B);
 predicted_AB = zeros(length(training),1);
 for  i = 1:length(predicted_AB)
-    predicted_AB(i) = Classifier.medDistance(classes,[training(i,1) training(i,2)]');
+    predicted_AB(i) = single_knn(new_training(i,1), new_training(i,2), training, actual_AB, 5);
 end
 
 [matrix,order] = confusionmat(actual_AB,predicted_AB);
-
-
+%}
 
 
 
