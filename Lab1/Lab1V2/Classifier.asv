@@ -16,7 +16,7 @@ classdef Classifier
             class.cluster = Classifier.gaussTransform(randn(size,2),class.mu,class.sigma);
         end
         
-        %calculates eigen value/vectors, as well as tilt angle
+        %calculates eigen value/vectors, as well as 
         function plotStdDev(class, colour)
             x=class.mu(1);
             y=class.mu(2);
@@ -33,7 +33,6 @@ classdef Classifier
             plot( pts(1,:), pts(2,:), colour);
         end
         
-        %helper function to plot
         function plotData(class, colour)
             x = class.cluster*[1;0];
             y = class.cluster*[0;1];
@@ -43,13 +42,11 @@ classdef Classifier
     
     methods (Static = true)
         
-        %applies mu and sigma transform to randn matrix
         function A = gaussTransform(in, mu, Sigma)
             R = chol(Sigma);
             A = repmat(mu',length(in),1)+in*R;
         end
         
-        %calculates MED distance
         function c = medDistance(classes, point)
             c = 0;
             d = Inf;
@@ -62,7 +59,6 @@ classdef Classifier
             end
         end
         
-        %helper function to plot bounded graphs
         function map = medClassifier(classes, x, y)
            map = zeros(length(x),length(y));
            for i = 1:length(x)
@@ -73,7 +69,6 @@ classdef Classifier
            end
         end
         
-        %calculates GED distance
         function c = gedDistance(classes,point)
             c = 0; 
             d = Inf; 
@@ -87,7 +82,6 @@ classdef Classifier
             end
         end
                 
-        %helper function to plot bounded graphs
         function map = gedClassifier(classes, x, y)
            map = zeros(length(x),length(y));
            for i = 1:length(x)
@@ -98,7 +92,6 @@ classdef Classifier
            end
         end
         
-        %calculates MAP distance
         function m = mapDistance(classes,point)
             m = 0;
             d = 0;
@@ -114,7 +107,6 @@ classdef Classifier
             end
         end
         
-        %helper function to plot bounded graphs
         function map = mapClassifier(classes, x, y)
             map = zeros(length(x),length(y));
             for i = 1:length(x)
