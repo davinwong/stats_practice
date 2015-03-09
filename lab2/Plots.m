@@ -8,11 +8,6 @@ classdef Plots
             x = minX:1e-3:maxX;
             y = pdf('normal', x, mu, sigma);
             plot(x, y, b);
-            
-            %hold on
-            
-            %yL = get(gca,'YLim');
-            %line([mu mu],yL,'Color',b);
         end
         
         function plotExpo(lambda, b)
@@ -27,6 +22,17 @@ classdef Plots
             x = 0:1e-1:5;
             y = pdf('uniform', x, minX, maxX);
             plot(y, b);
+        end
+        
+        function [mu, sigma] = sampleData(array)
+            N = length(array);
+            mu = sum(array)/N;
+            
+            sigma = zeros(2,2);
+            for i = 1:N
+                sigma = sigma + array(i,:).'*array(i,:);
+            end
+            sigma = (1/N) * sigma - (mu.'*mu);
         end
     end
 end
