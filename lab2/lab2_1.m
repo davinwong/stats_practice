@@ -143,3 +143,4 @@ hold on
 Plots.plotExpo(tLambda, 'g');
 title('Parzen gaussian window estimation Set B');
 legend('StdDev = 0.1', 'StdDev = 0.4', 'Act Dist');e
+
