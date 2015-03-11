@@ -40,15 +40,11 @@ classdef Plots
             numMeans = length(means(:, end));
             mu = [];
             sigma = [];
-            index = 0;
-            for i=1:numMeans
-                tl = variances(i+index,1);
-                tr = variances(i+index,2);
-                bl = variances(i+index+1, 1);
-                br = variances(i+index+1, 2);
-                sigma{i} = [tl tr ; bl br];
-                mu{i} = [means(i, 1) means(i, 2)];
-                index = index + 1;
+            count = 0;
+            for k=1:numMeans
+                mu{k} = [means(k, 1) means(k, 2)];
+                sigma{k} = [variances(k+count,1) variances(k+count,2); variances(k+count+1, 1) variances(k+count+1, 2)];
+                count = count + 1;
             end
 
             aMu = cell2mat(mu(1)); 
@@ -57,13 +53,13 @@ classdef Plots
             
             aSigma = cell2mat(sigma(1)); 
             bSigma = cell2mat(sigma(2)); 
-            cSigma = cell2mat(sigma(3));
+            cS = cell2mat(sigma(3));
 
-            aGauss = (1/(sqrt(2*pi)^2*sqrt(det(aSigma))))*exp(-0.5*(point - aMu)*inv(aSigma)*(point-aMu)');
-            bGauss = (1/(sqrt(2*pi)^2*sqrt(det(bSigma))))*exp(-0.5*(point - bMu)*inv(bSigma)*(point-bMu)');
-            cGauss = (1/(sqrt(2*pi)^2*sqrt(det(cSigma))))*exp(-0.5*(point - cMu)*inv(cSigma)*(point-cMu)');
+            guassA = 1/(sqrt(2*pi)^2*sqrt(det(aSigma)))*exp(-0.5*(point - aMu)*inv(aSigma)*(point-aMu)');
+            guassB = 1/(sqrt(2*pi)^2*sqrt(det(bSigma)))*exp(-0.5*(point - bMu)*inv(bSigma)*(point-bMu)');
+            guassC = 1/(sqrt(2*pi)^2*sqrt(det(sigC)))*exp(-0.5*(point - cMu)*inv(sigC)*(point-cMu)');
 
-            [~,class] = max([aGauss bGauss cGauss]);
+            [~,class] = max([guassA guassB guassC]);
         end
     end
 end
