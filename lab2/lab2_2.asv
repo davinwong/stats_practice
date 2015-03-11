@@ -1,0 +1,18 @@
+clear all
+load('lab2_2.mat');
+
+%2D Parametric Estimation Boundary
+aN = length(al);
+bN = length(bl);
+cN = length(cl);
+
+[aMu, aSigma] = Plots.sampleData(al);
+[bMu, bSigma] = Plots.sampleData(bl);
+[cMu, cSigma] = Plots.sampleData(cl);
+
+mu = [aMu; bMu; cMu];
+sigma = [aSigma; bSigma; cSigma];
+dataPts = [al; bl; cl];
+
+x = [min(dataPts(:, 1)
+
