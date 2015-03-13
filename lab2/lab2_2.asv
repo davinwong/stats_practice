@@ -110,6 +110,51 @@ for j=1:yA
 end
 contour(yVals, xVals, grid);
 %}
-sigma = [20 0; 0 20];
 
-aGauss = (1/(sqrt(2*pi)^2*sqrt(det(aSigma))))*exp(-0.5*(point - aMu)*inv(aSigma)*(point-aMu)');
+minX = min([min(al(1 ,:)) min(bl(1,:)) min(cl(1,:))]);
+maxX = max([max(al(1 ,:)) max(bl(1,:)) max(cl(1,:))]);
+minY = min([min(al(: ,1)) min(bl(:,1)) min(cl(:,1))]);
+maxY = max([max(al(: ,1)) max(bl(:,1)) max(cl(:,1))]);
+
+dx = 5;
+xVals = [minX:dx:maxX];
+yVals = [minY:dx:maxY];
+boundary = zeros(length(xVals), length(yVals));
+
+sigma = [20 0; 0 20];
+for i = 1:length(xVals)
+    for j = 1:length(yVals)
+        
+        point = [xVals(i) yVals(j)];
+        aSum = 0;
+        bSum = 0;
+        cSum = 0;
+        
+        for z = 1;length(al)
+            aMu = [al(z, 1) al(z, 2)];
+            aSum = aSum + (1/(sqrt(2*pi)^2*sqrt(det(sigma))))*exp(-0.5*(point - aMu)*inv(sigma)*(point-aMu)');
+        end
+        
+        for z = 1;length(bl)
+            bMu = [bl(z, 1) bl(z, 2)];
+            bSum = bSum + (1/(sqrt(2*pi)^2*sqrt(det(sigma))))*exp(-0.5*(point - bMu)*inv(sigma)*(point-bMu)');
+        end
+        
+        for z = 1;length(cl)
+            cMu = [cl(z, 1) cl(z, 2)];
+            cSum = cSum + (1/(sqrt(2*pi)^2*sqrt(det(sigma))))*exp(-0.5*(point - cMu)*inv(sigma)*(point-cMu)');
+        end
+        
+        aSum = aSum/length(al);
+        bSum = bSum/length(bl);
+        cSum = cSum/length(cl);
+        
+        disp('sums');
+        disp(aSum bSum cSum);
+        disp(
+        
+        [~,boundary(i, j)] = max([aSum bSum cSum]);
+    end
+end
+
+contour(yVals, xVals, boundary);

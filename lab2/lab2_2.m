@@ -119,11 +119,40 @@ maxY = max([max(al(: ,1)) max(bl(:,1)) max(cl(:,1))]);
 dx = 5;
 xVals = [minX:dx:maxX];
 yVals = [minY:dx:maxY];
-data = [xVals yVals];
+boundary = zeros(length(xVals), length(yVals));
 
 sigma = [20 0; 0 20];
-for i = 1:length(data)
-    for z = 1;length(al)
-        gauss = (1/(sqrt(2*pi)^2*sqrt(det(sigma))))*exp(-0.5*(data(z) - al(z))*inv(sigma)*(data(z)-al(z))');
+for i = 1:length(xVals)
+    for j = 1:length(yVals)
+        
+        point = [xVals(i) yVals(j)];
+        aSum = 0;
+        bSum = 0;
+        cSum = 0;
+        
+        for z = 1;length(al)
+            aMu = [al(z, 1) al(z, 2)];
+            aSum = aSum + (1/(sqrt(2*pi)^2*sqrt(det(sigma))))*exp(-0.5*(point - aMu)*inv(sigma)*(point-aMu)');
+        end
+        
+        for z = 1;length(bl)
+            bMu = [bl(z, 1) bl(z, 2)];
+            bSum = bSum + (1/(sqrt(2*pi)^2*sqrt(det(sigma))))*exp(-0.5*(point - bMu)*inv(sigma)*(point-bMu)');
+        end
+        
+        for z = 1;length(cl)
+            cMu = [cl(z, 1) cl(z, 2)];
+            cSum = cSum + (1/(sqrt(2*pi)^2*sqrt(det(sigma))))*exp(-0.5*(point - cMu)*inv(sigma)*(point-cMu)');
+        end
+        
+        aSum = aSum/length(al);
+        bSum = bSum/length(bl);
+        cSum = cSum/length(cl);
+        
+        [~,boundary(i, j)] = max([aSum bSum cSum]);
     end
 end
+
+contour(yVals, xVals, boundary);
+hold on
+plot(al(:,1), al(:,2), '+');

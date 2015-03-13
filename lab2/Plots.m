@@ -56,13 +56,14 @@ classdef Plots
             cMu = cell2mat(mu(3));
             
             aSigma = cell2mat(sigma(1)); 
+
             bSigma = cell2mat(sigma(2)); 
             cSigma = cell2mat(sigma(3));
 
             aGauss = (1/(sqrt(2*pi)^2*sqrt(det(aSigma))))*exp(-0.5*(point - aMu)*inv(aSigma)*(point-aMu)');
             bGauss = (1/(sqrt(2*pi)^2*sqrt(det(bSigma))))*exp(-0.5*(point - bMu)*inv(bSigma)*(point-bMu)');
             cGauss = (1/(sqrt(2*pi)^2*sqrt(det(cSigma))))*exp(-0.5*(point - cMu)*inv(cSigma)*(point-cMu)');
-            
+
             [~,class] = max([aGauss bGauss cGauss]);
         end
         
