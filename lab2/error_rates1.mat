@@ -1,0 +1,12 @@
+# Created by Octave 3.8.1, Tue Mar 17 12:51:58 2015 EDT <davintwong@localhost>
+# name: error_rates
+# type: matrix
+# rows: 5
+# columns: 2
+ 0.3075 0.23
+ 0.165 0.1775
+ 0.03 0.0725
+ 0.0125 0.025
+ 0.045 0.0025
+
+
