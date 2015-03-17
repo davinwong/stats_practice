@@ -30,7 +30,8 @@ function y_out = sequential_classify(g, data)
 
 		elseif j_discrim == size(g,1)
 			% last discriminant reached
-			if g(j_discrim, 5) == 0
+			% use class with fewer favorable discriminant functions 
+			if sum(g(:, 5)==0) >= sum(g(:, 6)==0)
 				% classify as A. start next data point.
 				y(i_data, 1) = 0;
 				i_data = i_data + 1;
