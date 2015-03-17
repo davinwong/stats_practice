@@ -25,17 +25,13 @@ for j=1:length(g)
 end
 
 axis([0 600 0 600]);
-print('4_1_3.png');
-save('4_1_3.mat', 'g')
+print('4_1_4.png');
+save('4_1_4.mat', 'g')
 
 pause;
 
 
 %%% Part 4-2 %%%
 
-% data = vertcat(a, b);
-% y = sequential_classify(g, data);
-
-
-%%% Part 4-3 %%%
-
+data = vertcat(a, b);
+y = sequential_classify(g, data);
