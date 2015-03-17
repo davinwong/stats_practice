@@ -1,13 +1,14 @@
 % sequential classifier
 
-function g_out = get_sequential_discriminants(a, b)
+function g_out = get_sequential_discriminants(a, b, limit_discrim)
 
+	% counter for current discriminant function
 	j = 1;
 
 	% proto_a, proto_b, n_aB, n_bA
 	g = [];
 
-	while length(a) > 0 | length(b) > 0
+	while (length(a) > 0 | length(b) > 0 ) & j <= limit_discrim
 
 		% find prototypes for a, b
 		if length(a) > 0

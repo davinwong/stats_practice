@@ -1,7 +1,7 @@
 load lab2_3.mat
 
 
-g = get_sequential_discriminants(a, b);
+g = get_sequential_discriminants(a, b, 999999999);
 
 
 %%% Part 4-1 %%%
