@@ -28,7 +28,7 @@ end
 
 axis([0 600 0 600]);
 print('4_1_4.png');
-save('4_1_4.mat', 'g')
+save('4_1_4.mat', 'g');
 
 pause;
 
