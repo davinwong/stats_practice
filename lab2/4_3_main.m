@@ -75,4 +75,4 @@ disp('columns: error: avg, min, max, std dev');
 disp(error_summary);
 
 
-save('error_rates1.mat', 'error_rates', 'error_summary');
+save('4_3_error_summary2.mat', 'error_rates', 'error_summary');
