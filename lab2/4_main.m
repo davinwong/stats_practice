@@ -43,7 +43,12 @@ for j=1:length(g)
 
 end
 
-axis([0 600 0 600])
+axis([0 600 0 600]);
+
+print('4_1_3.png');
+
+save('4_1_3.mat', 'g')
+
 
 pause;
 
