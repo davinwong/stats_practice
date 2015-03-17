@@ -29,7 +29,7 @@ for limit_discrim=1:5
 		end
 
 		% b
-		for d=(length(a)+1):length(b)
+		for d=(length(a)+1):(length(a)+length(b))
 			if y(d,1) == 1
 				;
 			else
@@ -43,7 +43,7 @@ for limit_discrim=1:5
 		disp(length(a));
 		disp(length(b));
 		disp('error_rate');
-		disp(errors / (length(a) + length(b)))
+		disp(errors / (length(a) + length(b)));
 
 		error_rates(limit_discrim, i) = errors / (length(a) + length(b));
 
