@@ -2,26 +2,29 @@ load lab2_3.mat
 
 data = vertcat(a, b);
 
-number_tests = 2;
 
 %%% Part 4-3 %%%
+
+max_limit_discrim = 5;
+number_tests = 2;
 
 % rows: # discrim
 % columns: multiple tests
 error_rates = [];
 
 % rows: # discrim
-% columns: avg err, min err, max err, std dev err
+% columns: error: avg, min, max, std dev
 error_summary = [];
 
-for j_discrim=1:5
+
+for j_limit_discrim=1:max_limit_discrim
 	% disp('limit');
-	% disp(j_discrim)
+	% disp(j_limit_discrim)
 
 	% run multiple tests for each limit
 	for i=1:number_tests
 		% disp(i);
-		g = get_sequential_discriminants(a, b, j_discrim);
+		g = get_sequential_discriminants(a, b, j_limit_discrim);
 		y = sequential_classify(g, data);
 
 		% calculate error rate
@@ -45,23 +48,28 @@ for j_discrim=1:5
 			end
 		end
 
-		disp('err');
-		disp(errors);
-		disp('lengths');
-		disp(length(a));
-		disp(length(b));
-		disp('error_rate');
-		disp(errors / (length(a) + length(b)));
+		% disp('err');
+		% disp(errors);
+		% disp('error_rate');
+		% disp(errors / (length(a) + length(b)));
 
-		error_rates(j_discrim, i) = errors / (length(a) + length(b));
+		error_rates(j_limit_discrim, i) = errors / (length(a) + length(b));
 
 	end
 end
 
 disp(error_rates);
 
-% for i=1:number_tests
-% end
+for j=1:max_limit_discrim
+	error_summary(j, 1) = mean(error_rates(j, :));
+	error_summary(j, 2) = min(error_rates(j, :));
+	error_summary(j, 3) = max(error_rates(j, :));
+	error_summary(j, 4) = std(error_rates(j, :));
+end
+
+disp('rows: # discrim');
+disp('columns: error: avg, min, max, std dev');
+disp(error_summary);
 
 
-save('error_rates1.mat', 'error_rates');
+save('error_rates1.mat', 'error_rates', 'error_summary');
