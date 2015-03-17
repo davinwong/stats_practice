@@ -6,6 +6,8 @@ g = get_sequential_discriminants(a, b);
 
 %%% Part 4-1 %%%
 
+% plot scatter data points, discriminant function lines
+
 scatter(a(:, 1), a(:, 2), 'r');
 hold on
 scatter(b(:, 1), b(:, 2), 'g');
@@ -32,6 +34,8 @@ pause;
 
 
 %%% Part 4-2 %%%
+
+% verify 100% correct classification on same training data
 
 data = vertcat(a, b);
 y = sequential_classify(g, data);
