@@ -11,14 +11,14 @@ function g_out = get_sequential_discriminants(a, b)
 
 		% find prototypes for a, b
 		if length(a) > 0
-			r_a = randi([1, length(a)]);
+			r_a = randi([1, size(a,1)]);
 			proto_a = a(r_a,:);
 		else
 			proto_a = [99999999999999999999999999999999999999999999999 99999999999999999999999999999999999999999999999];
 		end
 
 		if length(b) > 0
-			r_b = randi([1, length(b)]);
+			r_b = randi([1, size(b,1)]);
 			proto_b = b(r_b,:);
 		else
 			proto_b = [99999999999999999999999999999999999999999999999 99999999999999999999999999999999999999999999999];
@@ -33,7 +33,7 @@ function g_out = get_sequential_discriminants(a, b)
 		next_b = [];
 
 		% iterate a
-		for i=1:length(a)
+		for i=1:size(a,1)
 			d_a = (a(i,:) - proto_a) * (a(i,:) - proto_a)';
 			d_b = (a(i,:) - proto_b) * (a(i,:) - proto_b)';
 
@@ -51,7 +51,7 @@ function g_out = get_sequential_discriminants(a, b)
 		end
 
 		% iterate b
-		for i=1:length(b)
+		for i=1:size(b,1)
 			d_a = (b(i,:) - proto_a) * (b(i,:) - proto_a)';
 			d_b = (b(i,:) - proto_b) * (b(i,:) - proto_b)';
 
