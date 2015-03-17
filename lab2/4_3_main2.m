@@ -1,10 +1,10 @@
-load 4_3_data/4_3_error_summary1.mat
+load 4_3_graphs/4_3_error_summary1.mat
 
 disp(error_summary);
 
 x = [1,2,3,4,5];
 
-% avg
+%avg
 y = error_summary(:, 1)';
 plot(x,y,'b');
 hold on
@@ -23,9 +23,11 @@ xlabel('J (Limit of Discriminant Functions)');
 ylabel('Error Rate');
 print('error_graph1.png');
 
-% standard deviation
+%standard deviation
 % y = error_summary(:, 4)';
 % plot(x,y,'b');
+% xlabel('J (Limit of Discriminant Functions)');
+% ylabel('Standard Deviation');
 % print('std_dev_error.png');
 
 
