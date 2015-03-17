@@ -6,7 +6,7 @@ data = vertcat(a, b);
 %%% Part 4-3 %%%
 
 max_limit_discrim = 5;
-number_tests = 2;
+number_tests = 20;
 
 % rows: # discrim
 % columns: multiple tests
@@ -17,6 +17,7 @@ error_rates = [];
 error_summary = [];
 
 
+% run accuracy tests with varying discrim limits
 for j_limit_discrim=1:max_limit_discrim
 	% disp('limit');
 	% disp(j_limit_discrim)
@@ -26,6 +27,8 @@ for j_limit_discrim=1:max_limit_discrim
 		% disp(i);
 		g = get_sequential_discriminants(a, b, j_limit_discrim);
 		y = sequential_classify(g, data);
+		disp('ggg');
+		disp(g);
 
 		% calculate error rate
 		errors = 0;
