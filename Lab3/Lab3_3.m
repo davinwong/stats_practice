@@ -19,8 +19,8 @@ wool = readim('wool.im');
 dataSet = f8;
 testDataSet = f8t;
 
-data = zeros(16,2);
-testData = zeros(16,2);
+% data = zeros(16,2);
+% testData = zeros(16,2);
 
 for i = 1 : 10
     first = 0;
@@ -83,7 +83,7 @@ error = error / 160;
 cimage = zeros(256, 256);
 for i = 1:256
     for j=1:256
-        cimage(i,j) = Tools.paraClassifier([multf8(i,j,1), multf8(i,j,2)], testMeans, testVariances);
+        cimage(i,j) = Tools.paraClassifier([multf8(i,j,1), multf8(i,j,2)], means, variances);
     end
 end
 
