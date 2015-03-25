@@ -19,8 +19,6 @@ wool = readim('wool.im');
 dataSet = f8;
 testDataSet = f8t;
 
-% data = zeros(16,2);
-% testData = zeros(16,2);
 
 for i = 1 : 10
     first = 0;
@@ -79,7 +77,7 @@ error = error / 160;
 
 
 %%% Part 4
-
+%{
 cimage = zeros(256, 256);
 for i = 1:256
     for j=1:256
@@ -89,5 +87,67 @@ end
 
 imagesc(cimage);
 colormap(jet(10));
-
+%}
 %%% Part 5
+
+% random prototype
+mean_Mat = zeros(2, 10);
+for i = 1:10
+   randomNumber = randi([1, size(f32t,2)]);
+  
+   mean_Mat(1, i) = f32t(1, randomNumber);
+   mean_Mat(2, i) = f32t(2, randomNumber);
+end
+
+% rows: classes
+% columns: 0 or point's index
+class_point = zeros(10, 160) - 1;
+
+% iterate k-means a number of times
+for iterate = 1:10
+
+    % for each point, find closest class_mean. assign to class.
+    best_dist = 9999;
+    best_prototype = 0;
+    for pt = 1:size(f32t,2)
+        for proto = 1:10
+            prev_dist = ( ( f32t(1, pt) - mean_Mat(1, proto) )^2 + ( f32t(2, pt) - mean_Mat(2, proto) )^2 );
+
+            if (best_dist > prev_dist)
+                best_dist = prev_dist;
+                best_prototype = proto;
+                class_point(best_prototype, pt) = pt;
+            end 
+        end
+    end
+
+    for i = 1:10
+    %     new_mean = mean(i, 'omitnan')
+        all_points = class_point(i);
+        real_points = all_points(all_points >= 0);
+
+        for rp = 1:length(real_points)
+           sum_x = sum_x + f32t(1, real_points(rp));
+           sum_y = sum_y + f32t(2, real_points(rp));
+        end
+
+        avg_x = sum_x / length(real_points);
+        avg_y = sum_y / length(real_points);
+
+        mean_Mat(1, i) = avg_x;
+        mean_Mat(2, i) = avg_y;
+
+    end
+    
+end
+
+
+figure
+aplot(f32);
+hold on
+
+
+
+
+
+
