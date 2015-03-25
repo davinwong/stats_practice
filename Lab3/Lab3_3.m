@@ -73,3 +73,11 @@ for i = 1 : 10
 end
 
 error = error / 160
+
+
+%%% Part 4
+for i = 1:256
+    for j=1:256
+        cimage(i,j) = Tools.paraClassifier([multf8(i,j,1), multf8(i,j,2)], testMeans, testVariances)
+    end
+end
