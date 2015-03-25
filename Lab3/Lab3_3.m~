@@ -19,8 +19,8 @@ wool = readim('wool.im');
 dataSet = f8;
 testDataSet = f8t;
 
-data = zeros(16,2);
-testData = zeros(16,2);
+% data = zeros(16,2);
+% testData = zeros(16,2);
 
 for i = 1 : 10
     first = 0;
