@@ -99,32 +99,44 @@ for i = 1:10
    mean_Mat(2, i) = f32t(2, randomNumber);
 end
 
+
 % rows: classes
 % columns: 0 or point's index
 class_point = zeros(10, 160) - 1;
 
 % iterate k-means a number of times
-for iterate = 1:10
+for iterate = 1:10000
 
     % for each point, find closest class_mean. assign to class.
-    best_dist = 9999;
-    best_prototype = 0;
     for pt = 1:size(f32t,2)
-        for proto = 1:10
-            prev_dist = ( ( f32t(1, pt) - mean_Mat(1, proto) )^2 + ( f32t(2, pt) - mean_Mat(2, proto) )^2 );
+        
+        best_dist = 9999;
+        best_prototype = 0;
 
-            if (best_dist > prev_dist)
-                best_dist = prev_dist;
+        % on the point, find the best of the 10 prototypes
+        for proto = 1:10
+            curr_dist = ( f32t(1, pt) - mean_Mat(1, proto) )^2 + ( f32t(2, pt) - mean_Mat(2, proto) )^2;
+
+            if (curr_dist <= best_dist)
+                best_dist = curr_dist;
                 best_prototype = proto;
-                class_point(best_prototype, pt) = pt;
-            end 
+            end
         end
+
+        class_point(best_prototype, pt) = pt;
     end
 
+    % enter
     for i = 1:10
-    %     new_mean = mean(i, 'omitnan')
-        all_points = class_point(i);
+        all_points = class_point(i,:);
         real_points = all_points(all_points >= 0);
+        % what do you do if a class runs out of points? no points belong to
+        % the prototype
+        % impossible. each class must have at least 1 point because the
+        % prototype started on a point.
+
+        sum_x = 0;
+        sum_y = 0;
 
         for rp = 1:length(real_points)
            sum_x = sum_x + f32t(1, real_points(rp));
@@ -138,6 +150,7 @@ for iterate = 1:10
         mean_Mat(2, i) = avg_y;
 
     end
+
     
 end
 
@@ -145,7 +158,7 @@ end
 figure
 aplot(f32);
 hold on
-
+scatter(mean_Mat(1,:), mean_Mat(2,:));
 
 
 
